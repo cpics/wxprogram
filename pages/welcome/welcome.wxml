@@ -1,7 +1,7 @@
 <view class="container">
   <image class='user-avator' src="/images/avatar/3.png"></image>
   <text class="user-name"><text calss="user-name-intext">Hello</text>, 10月</text>
-  <view class="moto-container">
+  <view class="moto-container" bindtap="onTap">
     <text class="moto">开启小程序之旅</text>
   </view>
 </view>
