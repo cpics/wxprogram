@@ -1,5 +1,6 @@
 // pages/post/post-detail/post-detail.js
 const POSTDATA = require('../../../data/posts-data.js');
+let app = getApp();
 Page({
 
     /**
@@ -15,10 +16,8 @@ Page({
     onLoad: function(options) {
         let _this = this;
         let postId = options.id;
-        // this.setData({"postId":postId});
+        
         this.setData(POSTDATA.postList[postId]);
-        // console.log(this.data.detail);
-        // console.log(POSTDATA);
 
         let postsCollected = wx.getStorageSync("posts_Collected");
         if (postsCollected) {
@@ -32,19 +31,34 @@ Page({
             postsCollected[postId] = false;
             wx.setStorageSync("posts_Collected", postsCollected);
         }
+        
+        if (app.globalData.g_isPlayingMusic && app.globalData.g_currentMusicPostId == this.data.postId){
+            this.setData({
+                "isPlayingMusic":true
+            })
+        }
+        this.setMusicMonitor();
+        
 
-
-        wx.onBackgroundAudioPlay(function() {
+    },
+    setMusicMonitor(){
+        let _this = this;
+        wx.onBackgroundAudioPlay(function () {
             _this.setData({
                 "isPlayingMusic": true
             });
+            app.globalData.g_isPlayingMusic = true;
+            app.globalData.g_currentMusicPostId = _this.data.postId;
         });
-        wx.onBackgroundAudioPause(function() {
+        wx.onBackgroundAudioPause(function () {
             _this.setData({
                 "isPlayingMusic": false
             });
-        });
+            app.globalData.g_isPlayingMusic = false;
+            app.globalData.g_currentMusicPostId = null;
+            
 
+        });
     },
     onCollectionTap() {
         let postsCollected = wx.getStorageSync("posts_Collected");
@@ -52,7 +66,7 @@ Page({
 
         postsCollected[this.data.postId] = !postCollected;
 
-        // console.log(postCollected);
+        
 
         this.showModal(postsCollected, postsCollected[this.data.postId]);
 
@@ -155,7 +169,7 @@ Page({
      * 生命周期函数--监听页面卸载
      */
     onUnload: function() {
-
+        // this.setDat
     },
 
     /**

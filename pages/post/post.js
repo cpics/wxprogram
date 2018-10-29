@@ -20,11 +20,11 @@ Page({
      * 生命周期函数--监听页面加载
      */
     onLoad: function(options) {
-        console.log('onLoad');
+        // console.log('onLoad');
         // this.data.content = POSTDATA.postList;
         this.setData({ "content": POSTDATA.postList});
 
-        console.log(this.data.content);
+        // console.log(this.data.content);
     },
 
     /**

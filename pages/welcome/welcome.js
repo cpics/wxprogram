@@ -8,7 +8,7 @@ Page({
 
     },
     onTap() {
-        wx.redirectTo({
+        wx.switchTab({
             url: '/pages/post/post',
         })
     },
