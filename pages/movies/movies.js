@@ -1,4 +1,5 @@
 // pages/movies/movies.js
+var util = require('../../utils/util.js');
 let app = getApp();
 Page({
 
@@ -6,7 +7,9 @@ Page({
      * 页面的初始数据
      */
     data: {
-
+        intheaters: {},
+        comingSoon: {},
+        top250: {}
     },
 
     /**
@@ -16,12 +19,22 @@ Page({
         let inTheatersUrl = app.globalData.doubanBase + "/v2/movie/in_theaters" + "?start=0&count=3";
         let comingSoonUrl = app.globalData.doubanBase + "/v2/movie/coming_soon" + "?start=0&count=3";
         let top250Url = app.globalData.doubanBase + "/v2/movie/top250" + "?start=0&count=3";
+        let _this = this;
 
-        this.getMovieListData(inTheatersUrl);
-        this.getMovieListData(comingSoonUrl);
-        this.getMovieListData(top250Url);
+
+        util.http(inTheatersUrl,'GET',function(data){
+            _this.processDoubanData(data, "正在热映", "intheaters");
+        });
+        util.http(comingSoonUrl, 'GET', function (data) {
+            _this.processDoubanData(data, "即将上映", "comingSoon");
+        });
+        util.http(top250Url, 'GET', function (data) {
+            _this.processDoubanData(data, "豆瓣TOP250", "top250");
+        });
+
+
     },
-    getMovieListData: function(url) {
+    getMovieListData: function(url, categoryTitle, settedkey) {
         let _this = this;
         wx.request({
             url: url,
@@ -30,15 +43,16 @@ Page({
                 "Content-type": "appliaction/json"
             },
             success: function(res) {
-                console.log(res.data);
-                _this.processDoubanData(res.data);
+                // console.log(res.data);
+                _this.processDoubanData(res.data, categoryTitle, settedkey);
+                // console.log(this.data);
             },
             fail: function() {
 
             }
         })
     },
-    processDoubanData: function(moviesDouban) {
+    processDoubanData: function(moviesDouban, categoryTitle, settedkey) {
         let movies = [];
         for (var idx in moviesDouban.subjects) {
             var subject = moviesDouban.subjects[idx];
@@ -49,6 +63,7 @@ Page({
             }
 
             var tmp = {
+                stars: util.convertToStarsArray(subject.rating.stars),
                 title: title,
                 average: subject.rating.average,
                 coverageUrl: subject.images.large,
@@ -56,8 +71,17 @@ Page({
             }
             movies.push(tmp);
         }
-        this.setData({
-            movies: movies
+        var readyData = {};
+        readyData[settedkey] = {
+            "movies": movies,
+            "categoryTitle": categoryTitle
+        };
+        this.setData(readyData);
+    },
+    onMoreTap(event) {
+        var category = event.currentTarget.dataset.category;
+        wx.navigateTo({
+            url: "more-movie/more-movie?category=" + category
         })
     },
 

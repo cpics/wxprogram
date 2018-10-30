@@ -36,7 +36,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 2,
+			"current": 3,
 			"list": [
 				{
 					"id": 0,
@@ -55,6 +55,12 @@
 					"name": "movies",
 					"pathName": "pages/movies/movies",
 					"query": ""
+				},
+				{
+					"id": 3,
+					"name": "more-movie",
+					"pathName": "pages/movies/more-movie/more-movie",
+					"query": "category=正在热映"
 				}
 			]
 		}
