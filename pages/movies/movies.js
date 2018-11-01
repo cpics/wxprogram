@@ -9,7 +9,10 @@ Page({
     data: {
         intheaters: {},
         comingSoon: {},
-        top250: {}
+        top250: {},
+        searchResult:{},
+        containerShow: true,
+        searchPannelShow: false
     },
 
     /**
@@ -22,17 +25,35 @@ Page({
         let _this = this;
 
 
-        util.http(inTheatersUrl,'GET',function(data){
+        util.http(inTheatersUrl, 'GET', function(data) {
             _this.processDoubanData(data, "正在热映", "intheaters");
         });
-        util.http(comingSoonUrl, 'GET', function (data) {
+        util.http(comingSoonUrl, 'GET', function(data) {
             _this.processDoubanData(data, "即将上映", "comingSoon");
         });
-        util.http(top250Url, 'GET', function (data) {
+        util.http(top250Url, 'GET', function(data) {
             _this.processDoubanData(data, "豆瓣TOP250", "top250");
         });
 
 
+    },
+    onBindFocus(event) {
+        this.setData({
+            containerShow: false,
+            searchPannelShow: true
+        })
+    },
+    onBindChange(event) {
+        var text = event.detail.value;
+        var searchUrl = app.globalData.doubanBase + "/v2/movie/search?q=" + text;
+        this.getMovieListData(searchUrl, "", "searchResult");
+    },
+    onCancelImgTap(event) {
+        this.setData({
+            containerShow: true,
+            searchPannelShow: false,
+            searchResult:{}
+        });
     },
     getMovieListData: function(url, categoryTitle, settedkey) {
         let _this = this;

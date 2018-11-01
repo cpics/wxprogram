@@ -16,7 +16,7 @@ Page({
     onLoad: function(options) {
         let _this = this;
         let postId = options.id;
-        
+
         this.setData(POSTDATA.postList[postId]);
 
         let postsCollected = wx.getStorageSync("posts_Collected");
@@ -31,32 +31,39 @@ Page({
             postsCollected[postId] = false;
             wx.setStorageSync("posts_Collected", postsCollected);
         }
-        
-        if (app.globalData.g_isPlayingMusic && app.globalData.g_currentMusicPostId == this.data.postId){
+
+        if (app.globalData.g_isPlayingMusic && app.globalData.g_currentMusicPostId == this.data.postId) {
             this.setData({
-                "isPlayingMusic":true
+                "isPlayingMusic": true
             })
         }
         this.setMusicMonitor();
-        
+
 
     },
-    setMusicMonitor(){
+    setMusicMonitor() {
         let _this = this;
-        wx.onBackgroundAudioPlay(function () {
+        wx.onBackgroundAudioPlay(function() {
             _this.setData({
                 "isPlayingMusic": true
             });
             app.globalData.g_isPlayingMusic = true;
             app.globalData.g_currentMusicPostId = _this.data.postId;
         });
-        wx.onBackgroundAudioPause(function () {
+        wx.onBackgroundAudioPause(function() {
             _this.setData({
                 "isPlayingMusic": false
             });
             app.globalData.g_isPlayingMusic = false;
             app.globalData.g_currentMusicPostId = null;
-            
+
+        });
+        wx.onBackgroundAudioStop(function() {
+            _this.setData({
+                "isPlayingMusic": false
+            });
+            app.globalData.g_isPlayingMusic = false;
+            app.globalData.g_currentMusicPostId = null;
 
         });
     },
@@ -66,7 +73,7 @@ Page({
 
         postsCollected[this.data.postId] = !postCollected;
 
-        
+
 
         this.showModal(postsCollected, postsCollected[this.data.postId]);
 
